@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -45,13 +47,15 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         toolbar = getSupportActionBar(); //Get Action bar
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) navView.getLayoutParams();
+        layoutParams.setBehavior(new BottomNavigationBehavior());
+
         toolbar.setTitle("Home"); //Change title first
         loadFragment(new HomeFragment());//load fragment
-//        intentView();
-//        ViewMv();
-//        ViewPlay();
     }
 
     private void loadFragment(Fragment fragment) {
