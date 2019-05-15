@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+
+    >
+    <ImageView
+        android:background="#ECECEC"
+        android:scaleType="fitXY"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/imageView_img"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Bài hát"
+        android:id="@+id/textView_songName"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageView_img"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/textView_count"
+        android:layout_margin="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="73"
+        android:id="@+id/textView_count"
+        android:layout_alignBottom="@+id/imageView_img"
+        android:layout_alignLeft="@+id/textView_songName"
+        android:layout_alignStart="@+id/textView_songName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp" />
+
+   <!--<include layout="@layout/list_layout"/>-->
+</LinearLayout>
