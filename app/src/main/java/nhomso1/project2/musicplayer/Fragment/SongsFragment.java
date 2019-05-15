@@ -1,4 +1,4 @@
-package nhomso1.project2.musicplayer;
+package nhomso1.project2.musicplayer.Fragment;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -12,34 +12,58 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import nhomso1.project2.musicplayer.Adapter.RecyclerViewAdapter;
-import nhomso1.project2.musicplayer.Interface.onItemClickListener;
-import nhomso1.project2.musicplayer.Object.Audio;
 import nhomso1.project2.musicplayer.RecyclerView.CustomTouchListener;
-import nhomso1.project2.musicplayer.Service.MediaPlayerService;
 import nhomso1.project2.musicplayer.SqLite.FavoriteDAO;
+import nhomso1.project2.musicplayer.Service.MediaPlayerService;
+import nhomso1.project2.musicplayer.Object.Audio;
+import nhomso1.project2.musicplayer.R;
+import nhomso1.project2.musicplayer.Adapter.RecyclerViewAdapter;
 import nhomso1.project2.musicplayer.Storage.StorageUtil;
+import nhomso1.project2.musicplayer.Interface.onItemClickListener;
 
 
-public class SongListActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link SongsFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link SongsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class SongsFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    private OnFragmentInteractionListener mListener;
+
+
     public static final String Broadcast_PLAY_NEW_AUDIO = "nhomso1.project2.MusicPlayer.PlayNewAudio";
     public static final int MY_PERMISSION_REQUEST = 123;
 
@@ -56,22 +80,54 @@ public class SongListActivity extends AppCompatActivity {
     int imageIndex = 0;
 
     Toolbar toolbar;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_list);
 
-        //Ánh xạ toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    View view;
+
+    public SongsFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment SongsFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static SongsFragment newInstance(String param1, String param2) {
+        SongsFragment fragment = new SongsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_songs, container, false);
 
         //Ánh xạ image album phục vụ cho coordinate layout
-        collapsingImageView = (ImageView) findViewById(R.id.collapsingImageView);
+        collapsingImageView = view.findViewById(R.id.collapsingImageView);
         loadCollapsingImage(imageIndex);
 
 
         //Nút floatAction để chuyển hình cho vui thôi
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,22 +143,23 @@ public class SongListActivity extends AppCompatActivity {
             }
         });
 
-
         //Xin quyền trực tiếp, nếu không xin được thì sẽ chuyển đến
         //hàm onRequestPermissionsResult(int requestCode,...) để xin
-        if (ContextCompat.checkSelfPermission(SongListActivity.this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SongListActivity.this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(SongListActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
             } else {
-                ActivityCompat.requestPermissions(SongListActivity.this,
+                ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
             }
         } else {
-            initRecyclerView(); //Khởi tạo danh sách và bài hát lên RecycleView
+            initRecyclerView(view); //Khởi tạo danh sách và bài hát lên RecycleView
         }
+        return view;
+
     }
 
     @Override
@@ -111,14 +168,14 @@ public class SongListActivity extends AppCompatActivity {
             case MY_PERMISSION_REQUEST: {
                 //Xin quyền truy cập vào SDCARD ở đây
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(SongListActivity.this,
+                    if (ContextCompat.checkSelfPermission(getActivity(),
                             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(SongListActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
-                        initRecyclerView();
+                        Toast.makeText(getActivity(), "Permission Granted!", Toast.LENGTH_SHORT).show();
+                        initRecyclerView(view);
                     }
                 } else {
-                    Toast.makeText(SongListActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
                 }
                 return;
             }
@@ -126,10 +183,10 @@ public class SongListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; Thêm các hành động vào menu: Quyên sẽ thêm vào chỗ này
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -137,7 +194,6 @@ public class SongListActivity extends AppCompatActivity {
         // Handle action bar item xử lý ở đây
         // miễn là có activity khai báo trong AndroidManifest.xml.
         int id = item.getItemId();
-
         //Không làm gì cả
         if (id == R.id.action_settings) {
             return true;
@@ -145,15 +201,22 @@ public class SongListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putBoolean("serviceStatus", serviceBound);
-    }
+
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        serviceBound = savedInstanceState.getBoolean("serviceStatus");
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("serviceStatus", serviceBound);
+        Log.d("it10069",outState.toString());
     }
+//
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        serviceBound = savedInstanceState.getBoolean("serviceStatus");
+//    }
+
+
 
     /**
      * Binding tới to the AudioPlayer Service
@@ -191,7 +254,7 @@ public class SongListActivity extends AppCompatActivity {
      * Load audio lên đổ vào danh sách audioList
      */
     private void loadAudio() {
-        ContentResolver contentResolver = getContentResolver();
+        ContentResolver contentResolver = getActivity().getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
@@ -220,7 +283,7 @@ public class SongListActivity extends AppCompatActivity {
      * Giờ ta sẽ load nhạc và khởi tạo
      * Mọi xử lý liên quan đến chơi nhạc đều nằm ở Class MediaPlayerService chứ không nằm ở đây
      */
-    private void initRecyclerView() {
+    private void initRecyclerView(View view) {
 
         //Đầu tiên load list Audio lên
         loadAudio();
@@ -228,24 +291,25 @@ public class SongListActivity extends AppCompatActivity {
 
         if (audioList.size() > 0) {
             //Ánh xạ recyclerView, icon play pause của bài hát
-            recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+            recyclerView = view.findViewById(R.id.recyclerview);
 
             //Khởi tạo Adapter để đổ vào recyclerView
-            RecyclerViewAdapter adapter = new RecyclerViewAdapter(audioList, getApplication());
+            RecyclerViewAdapter adapter = new RecyclerViewAdapter(audioList, getActivity());
             recyclerView.setAdapter(adapter);
 
             //recyclerView với LinearLayout
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
             //Bắt sự kiện nhấp vào thành phần của danh sách
-            recyclerView.addOnItemTouchListener(new CustomTouchListener(this,recyclerView , new onItemClickListener() {
+            recyclerView.addOnItemTouchListener(new CustomTouchListener(getActivity(), recyclerView, new onItemClickListener() {
                 @Override
-                public void playOnClick(View v,int index) {
+                public void playOnClick(View v, int index) {
                     //Các hiệu ứng và thành phần giao diện khác xử lý ở đây nhé
                     playAudio(index); //Khi bất kỳ item nào được nhấn thì sẽ chơi bài đó Easy!!!
                 }
+
                 @Override
-                public void favoriteOnClick(View v,int index) {
+                public void favoriteOnClick(View v, int index) {
                     addFavorite(index);
                 }
             }));
@@ -253,43 +317,45 @@ public class SongListActivity extends AppCompatActivity {
     }
 
     /**
-     *  Kiểm tra service active và Intent đến MediaPlayerService.class
-     *  Vì nó không có giao diện nên mình Intent tới
-     *  Sẽ không có Activity nào được đổ lên trên Activi hiện tại
+     * Kiểm tra service active và Intent đến MediaPlayerService.class
+     * Vì nó không có giao diện nên mình Intent tới
+     * Sẽ không có Activity nào được đổ lên trên Activi hiện tại
+     *
      * @param audioIndex
      */
     private void playAudio(int audioIndex) {
         //Check is service is active
         if (!serviceBound) {
             //Lưu trữ audioList to SharedPreferences
-            StorageUtil storage = new StorageUtil(getApplicationContext());
+            StorageUtil storage = new StorageUtil(getActivity());
 
             storage.storeAudio(audioList);
             storage.storeAudioIndex(audioIndex);
 
-            Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            Intent playerIntent = new Intent(getActivity(), MediaPlayerService.class);
 
-            startService(playerIntent);
-            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            getActivity().startService(playerIntent);
+
+            getActivity().bindService(playerIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
 
         } else {
             //lưu một audioIndex to SharedPreferences
-            StorageUtil storage = new StorageUtil(getApplicationContext());
+            StorageUtil storage = new StorageUtil(getActivity());
             storage.storeAudioIndex(audioIndex);
 
             //Service is active and...
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
             Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-            sendBroadcast(broadcastIntent);
+            player.sendBroadcast(broadcastIntent);
         }
     }
 
-    private void addFavorite(int audioIndex){
-        FavoriteDAO db = new FavoriteDAO(this);
+    private void addFavorite(int audioIndex) {
+        FavoriteDAO db = new FavoriteDAO(getActivity());
         Audio au = audioList.get(audioIndex);
 
         db.addAudio(au);
-        Toast.makeText(getApplicationContext(),
+        Toast.makeText(getContext(),
                 "Lưu vào yêu thích", Toast.LENGTH_LONG).show();
     }
 
@@ -302,13 +368,50 @@ public class SongListActivity extends AppCompatActivity {
         collapsingImageView.setImageDrawable(array.getDrawable(i));
     }
 
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
         if (serviceBound) {
-            unbindService(serviceConnection);
+            getActivity().unbindService(serviceConnection);
             //service is active
             player.stopSelf();
         }
+        mListener = null;
     }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+
 }

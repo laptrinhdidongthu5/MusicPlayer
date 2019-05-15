@@ -1,14 +1,10 @@
 package nhomso1.project2.musicplayer;
 
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +13,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import nhomso1.project2.musicplayer.Adapter.RecyclerViewAdapter;
+import nhomso1.project2.musicplayer.Interface.onItemClickListener;
+import nhomso1.project2.musicplayer.Object.Audio;
+import nhomso1.project2.musicplayer.RecyclerView.CustomTouchListener;
+import nhomso1.project2.musicplayer.Service.MediaPlayerService;
+import nhomso1.project2.musicplayer.SqLite.FavoriteDAO;
+import nhomso1.project2.musicplayer.Storage.StorageUtil;
 
 public class FavoriteSong extends AppCompatActivity {
     public static final String Broadcast_PLAY_NEW_AUDIO = "it1006.learn.musicwidget.PlayNewAudio";

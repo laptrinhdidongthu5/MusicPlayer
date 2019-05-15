@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 
+import nhomso1.project2.musicplayer.Service.PlaySongService;
+
 public class MusicActivity extends AppCompatActivity {
 
     TextView txtTitle,txtTimeSong,txtTimeTotal;

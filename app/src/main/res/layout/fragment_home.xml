@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".Fragment.HomeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,9 +11,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:src="@drawable/banner2" />
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            android:src="@drawable/image6" />
 
         <LinearLayout
             android:layout_width="match_parent"
