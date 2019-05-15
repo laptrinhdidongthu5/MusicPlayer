@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class StorageUtil {
 
 
-    private final String STORAGE = "it1006.learn.musicwidget.STORAGE";
+    private final String STORAGE = "nhomso1.project2.MusicPlayer.STORAGE";
 
 
     private SharedPreferences preferences;
