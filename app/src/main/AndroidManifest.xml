@@ -26,15 +26,6 @@
 
         </activity>
 
-        <receiver android:name=".MusicWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/music_widget_info" />
-        </receiver>
-
         <activity android:name=".MusicActivity" />
         <activity android:name=".ListSongActivity">
 
@@ -50,7 +41,7 @@
 
         </activity>
 
-        <receiver android:name=".StackWidgetProvider">
+        <receiver android:name=".Widget.StackWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -60,11 +51,11 @@
         </receiver>
 
         <service
-            android:name=".StackWidgetService"
+            android:name=".Widget.StackWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".MediaPlayerService"
+            android:name=".Service.MediaPlayerService"
             android:enabled="true"
             android:exported="true"
             android:label="MusicWidget" />
