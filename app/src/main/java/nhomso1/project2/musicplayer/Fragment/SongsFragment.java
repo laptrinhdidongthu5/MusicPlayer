@@ -82,6 +82,8 @@ public class SongsFragment extends Fragment {
 
     View view;
 
+    StorageUtil storageUtil;
+
     public SongsFragment() {
         // Required empty public constructor
     }
@@ -206,7 +208,6 @@ public class SongsFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("serviceStatus", serviceBound);
-        Log.d("it10069",outState.toString());
     }
 //
 //    @Override
@@ -215,38 +216,36 @@ public class SongsFragment extends Fragment {
 //        serviceBound = savedInstanceState.getBoolean("serviceStatus");
 //    }
 
-
-
-    /**
-     * Binding tới to the AudioPlayer Service
-     */
-    public ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            //Ràng buộc với LocalService, bỏ IBinder và lấy phiên bản LocalService
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-
-            player = binder.getService();
-
-            serviceBound = true;//Set biến service Bound đang được chạy
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-            //Đơn giản là nếu service bị disconnect thì serviceBound phải bằng false đảm bảo cho xử lý chơi nhạc
-        }
-
-        @Override
-        public void onBindingDied(ComponentName name) {
-
-        }
-
-        @Override
-        public void onNullBinding(ComponentName name) {
-
-        }
-    };
+//    /**
+//     * Binding tới to the AudioPlayer Service
+//     */
+//    public ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            //Ràng buộc với LocalService, bỏ IBinder và lấy phiên bản LocalService
+//            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+//
+//            player = binder.getService();
+//
+//            serviceBound = true;//Set biến service Bound đang được chạy
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            serviceBound = false;
+//            //Đơn giản là nếu service bị disconnect thì serviceBound phải bằng false đảm bảo cho xử lý chơi nhạc
+//        }
+//
+//        @Override
+//        public void onBindingDied(ComponentName name) {
+//
+//        }
+//
+//        @Override
+//        public void onNullBinding(ComponentName name) {
+//
+//        }
+//    };
 
     /**
      * Kiểm tra toàn bộ EXTERNAL_CONTENT
@@ -254,6 +253,9 @@ public class SongsFragment extends Fragment {
      */
     public void loadAudio() {
         ContentResolver contentResolver = getActivity().getContentResolver();
+
+        StorageUtil storage = new StorageUtil(getActivity().getApplicationContext());
+
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
@@ -269,8 +271,11 @@ public class SongsFragment extends Fragment {
 
                 // Save to audioList
                 audioList.add(new Audio(data, title, album, artist));
+
             } while (cursor.moveToNext());
+            Log.d("it10069", audioList.get(0).getArtist());
         }
+        storage.storeAudio(audioList);
         cursor.close();
     }
 
@@ -302,7 +307,7 @@ public class SongsFragment extends Fragment {
                 @Override
                 public void playOnClick(View v, int index) {
                     //Các hiệu ứng và thành phần giao diện khác xử lý ở đây nhé
-                    playAudio(index); //Khi bất kỳ item nào được nhấn thì sẽ chơi bài đó Easy!!!
+//                    playAudio(index); //Khi bất kỳ item nào được nhấn thì sẽ chơi bài đó Easy!!!
                     Intent intent = new Intent(getActivity(), MusicActivity.class);
                     intent.putExtra("index",index);
                     startActivity(intent);
@@ -315,39 +320,39 @@ public class SongsFragment extends Fragment {
         }
     }
 
-    /**
-     * Kiểm tra service active và Intent đến MediaPlayerService.class
-     * Vì nó không có giao diện nên mình Intent tới
-     * Sẽ không có Activity nào được đổ lên trên Activi hiện tại
-     *
-     * @param audioIndex
-     */
-    public void playAudio(int audioIndex) {
-        //Check is service is active
-        if (!serviceBound) {
-            //Lưu trữ audioList to SharedPreferences
-            StorageUtil storage = new StorageUtil(getActivity());
-
-            storage.storeAudio(audioList);
-            storage.storeAudioIndex(audioIndex);
-
-            Intent playerIntent = new Intent(getActivity(), MediaPlayerService.class);
-
-            getActivity().startService(playerIntent);
-
-            getActivity().bindService(playerIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
-
-        } else {
-            //lưu một audioIndex to SharedPreferences
-            StorageUtil storage = new StorageUtil(getActivity());
-            storage.storeAudioIndex(audioIndex);
-
-            //Service is active and...
-            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-            player.sendBroadcast(broadcastIntent);
-        }
-    }
+//    /**
+//     * Kiểm tra service active và Intent đến MediaPlayerService.class
+//     * Vì nó không có giao diện nên mình Intent tới
+//     * Sẽ không có Activity nào được đổ lên trên Activi hiện tại
+//     *
+//     * @param audioIndex
+//     */
+//    public void playAudio(int audioIndex) {
+//        //Check is service is active
+//        if (!serviceBound) {
+//            //Lưu trữ audioList to SharedPreferences
+//            StorageUtil storage = new StorageUtil(getActivity());
+//
+//            storage.storeAudio(audioList);
+//            storage.storeAudioIndex(audioIndex);
+//
+//            Intent playerIntent = new Intent(getActivity(), MediaPlayerService.class);
+//
+//            getActivity().startService(playerIntent);
+//
+//            getActivity().bindService(playerIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
+//
+//        } else {
+//            //lưu một audioIndex to SharedPreferences
+//            StorageUtil storage = new StorageUtil(getActivity());
+//            storage.storeAudioIndex(audioIndex);
+//
+//            //Service is active and...
+//            //Send a broadcast to the service -> PLAY_NEW_AUDIO
+//            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
+//            player.sendBroadcast(broadcastIntent);
+//        }
+//    }
 
     public void addFavorite(int audioIndex) {
         FavoriteDAO db = new FavoriteDAO(getActivity());
@@ -389,11 +394,11 @@ public class SongsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if (serviceBound) {
-            getActivity().unbindService(serviceConnection);
-            //service is active
-            player.stopSelf();
-        }
+//        if (serviceBound) {
+//            getActivity().unbindService(serviceConnection);
+//            //service is active
+//            player.stopSelf();
+//        }
         mListener = null;
     }
 
