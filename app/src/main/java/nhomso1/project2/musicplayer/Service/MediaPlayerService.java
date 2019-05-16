@@ -263,7 +263,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-
             //Load data from SharedPreferences được get ở bên Mainactivity
             StorageUtil storage = new StorageUtil(getApplicationContext());
             audioList = storage.loadAudio();
@@ -633,6 +632,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .build());
     }
 
+    public boolean isPlaying() {
+        if (mediaPlayer.isPlaying()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
 
     /**
      * Handle PhoneState changes

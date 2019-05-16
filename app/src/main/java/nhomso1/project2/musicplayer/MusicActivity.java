@@ -39,8 +39,6 @@ public class MusicActivity extends AppCompatActivity {
     ImageView imgHinh;
     ImageButton btnPrev, btnPlay, btnStop, btnNext;
 
-    private PlaySongService playSongService;
-
     int position = 0;
     Animation animation;
 
@@ -49,6 +47,9 @@ public class MusicActivity extends AppCompatActivity {
     boolean serviceBound = false;
 
     public MediaPlayerService player;
+
+    private StorageUtil storageUtil;
+
     public static final String Broadcast_PLAY_NEW_AUDIO = "nhomso1.project2.MusicPlayer.PlayNewAudio";
     public static final int MY_PERMISSION_REQUEST = 123;
 
@@ -96,23 +97,20 @@ public class MusicActivity extends AppCompatActivity {
 
         playAudio(position);
 
-        animation = AnimationUtils.loadAnimation(this, R.anim.disc_rotate);
+        animation = AnimationUtils.loadAnimation(MusicActivity.this, R.anim.disc_rotate);
+        imgHinh.startAnimation(animation);
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 position++;
-                playSongService.LayGiaTri(position);
-                if (position > playSongService.arraySong.size() - 1) {
+                if (position > audioList.size() - 1) {
                     position = 0;
-                    playSongService.LayGiaTri(position);
                 }
-                if (playSongService.Playing()) {
-                    playSongService.Stop();
-                }
-                playSongService.KhoiTaoMediaPlayer();
-                txtTitle.setText(playSongService.TenBaiHat());
-                playSongService.Play();
+                player.stopMedia();
+
+                player.initMediaPlayer();
+                txtTitle.setText(audioList.get(position).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
                 SetTimeTotal();
@@ -133,7 +131,7 @@ public class MusicActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                playSongService.ThayDoiThanhBar(skSong.getProgress());
+//                playSongService.ThayDoiThanhBar(skSong.getProgress());
             }
         });
 
@@ -141,17 +139,13 @@ public class MusicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 position--;
-                playSongService.LayGiaTri(position);
                 if (position < 0) {
-                    position = playSongService.arraySong.size() - 1;
-                    playSongService.LayGiaTri(position);
+                    position = audioList.size() - 1;
+                    storageUtil.storeAudioIndex(position);
                 }
-                if (playSongService.Playing()) {
-                    playSongService.Stop();
-                }
-                playSongService.KhoiTaoMediaPlayer();
-                txtTitle.setText(playSongService.TenBaiHat());
-                playSongService.Play();
+                player.stopMedia();
+                player.initMediaPlayer();
+                txtTitle.setText(audioList.get(position).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
                 SetTimeTotal();
@@ -162,10 +156,9 @@ public class MusicActivity extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSongService.Stop();
-                playSongService.Relaxse();
+                player.stopMedia();
                 btnPlay.setImageResource(R.drawable.play1);
-                playSongService.KhoiTaoMediaPlayer();
+                player.initMediaPlayer();
                 SetTimeTotal();
             }
         });
@@ -173,24 +166,22 @@ public class MusicActivity extends AppCompatActivity {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("SONG1", playSongService.TenBaiHat());
-                if (playSongService.Playing() == true) {
+                if (player.isPlaying()) {
                     //Nếu đang hát--->Pause-->Play
-                    playSongService.TamDung();
+                    player.pauseMedia();
                     btnPlay.setImageResource(R.drawable.play1);
                     animation.cancel();
                 } else {
                     // Đang ngừng ---> Phát ---> đổi hình pause
-                    playSongService.Play();
+                    player.playMedia();
                     btnPlay.setImageResource(R.drawable.pause1);
                     imgHinh.startAnimation(animation);
                 }
 
-                txtTitle.setText(playSongService.TenBaiHat());
+                txtTitle.setText(audioList.get(position).getTitle());
                 SetTimeTotal();
                 UpdateTimeSong();
-                playSongService.Play();
-
+                player.playMedia();
 
             }
         });
@@ -202,22 +193,20 @@ public class MusicActivity extends AppCompatActivity {
             @Override
             public void run() {
                 SimpleDateFormat dinhDangGio = new SimpleDateFormat("mm:ss");
-                txtTimeSong.setText(dinhDangGio.format(playSongService.LayMedia().getCurrentPosition()));
-                skSong.setProgress(playSongService.LayMedia().getCurrentPosition());
+                txtTimeSong.setText(dinhDangGio.format(player.getMediaPlayer().getCurrentPosition()));
+                skSong.setProgress(player.getMediaPlayer().getCurrentPosition());
 
                 // Kiểm tra thời gian bài hát---> nếu kết thúc ----> next
-                playSongService.LayMedia().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                player.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         position++;
-                        if (position > playSongService.arraySong.size() - 1) {
+                        if (position > audioList.size() - 1) {
                             position = 0;
                         }
-                        if (playSongService.Playing()) {
-                            playSongService.Stop();
+                        if (player.isPlaying()) {
+                            player.stopMedia();
                         }
-                        playSongService.LayGiaTri(position);
-                        playSongService.Play();
                         btnPlay.setImageResource(R.drawable.pause1);
                         SetTimeTotal();
                     }
@@ -229,34 +218,13 @@ public class MusicActivity extends AppCompatActivity {
 
     private void SetTimeTotal() {
         SimpleDateFormat dinhDangGio = new SimpleDateFormat("mm:ss");
-        txtTimeTotal.setText(dinhDangGio.format(playSongService.MaxSize()));
-        skSong.setMax(playSongService.MaxSize());
-    }
-
-
-    private void AnhXa() {
-        txtTitle = findViewById(R.id.textviewTitle);
-        txtTimeSong = findViewById(R.id.TextViewTimeSong);
-        txtTimeTotal = findViewById(R.id.TextViewTimeTotal);
-        skSong = findViewById(R.id.seekBarSong);
-        btnPrev = findViewById(R.id.imageButtonPrev);
-        btnNext = findViewById(R.id.imageButtonNext);
-        btnPlay = findViewById(R.id.imageButtonPlay);
-        btnStop = findViewById(R.id.imageButtonStop);
-        imgHinh = findViewById(R.id.imageViewDisc);
+        txtTimeTotal.setText(dinhDangGio.format(player.getMediaPlayer().getDuration()));
+        skSong.setMax(player.getMediaPlayer().getDuration());
     }
 
     protected void onStart() {
         super.onStart();
-
-        // Tạo đối tượng Intent cho WeatherService.
-//        Intent intent = new Intent(this, PlaySongService.class);
-
-        // Gọi method bindService(..) để giàng buộc dịch vụ với giao diện.
-//        this.bindService(intent, playSongServiceConnection, Context.BIND_AUTO_CREATE);
-//        startService(intent);
     }
-
 
     /**
      * Kiểm tra service active và Intent đến MediaPlayerService.class
@@ -302,5 +270,19 @@ public class MusicActivity extends AppCompatActivity {
             player.stopSelf();
         }
     }
+
+
+    private void AnhXa() {
+        txtTitle = findViewById(R.id.textviewTitle);
+        txtTimeSong = findViewById(R.id.TextViewTimeSong);
+        txtTimeTotal = findViewById(R.id.TextViewTimeTotal);
+        skSong = findViewById(R.id.seekBarSong);
+        btnPrev = findViewById(R.id.imageButtonPrev);
+        btnNext = findViewById(R.id.imageButtonNext);
+        btnPlay = findViewById(R.id.imageButtonPlay);
+        btnStop = findViewById(R.id.imageButtonStop);
+        imgHinh = findViewById(R.id.imageViewDisc);
+    }
+
 }
 
