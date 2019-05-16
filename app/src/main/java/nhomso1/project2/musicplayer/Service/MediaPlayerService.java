@@ -184,6 +184,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
 
+
+
     public void removeNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_ID);

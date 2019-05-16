@@ -101,25 +101,14 @@ public class MusicActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                position++;
-                if (position > audioList.size() - 1) {
-                    position = 0;
-                }
+                player.skipToNext();
 
-                storageUtil.storeAudioIndex(position);
-                try {
-                    player.initMediaSession();
-                    player.initMediaPlayer();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                txtTitle.setText(audioList.get(position).getTitle());
+                txtTitle.setText(audioList.get(player.audioIndex).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
-                player.skipToNext();
+
                 SetTimeTotal();
                 UpdateTimeSong();
-
             }
         });
 
@@ -143,15 +132,12 @@ public class MusicActivity extends AppCompatActivity {
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                position--;
-                if (position < 0) {
-                    position = audioList.size() - 1;
-                }
-                storageUtil.storeAudioIndex(position);
-                txtTitle.setText(audioList.get(position).getTitle());
+                player.skipToPrevious();
+
+                txtTitle.setText(audioList.get(player.audioIndex).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
-                player.skipToPrevious();
+
                 SetTimeTotal();
                 UpdateTimeSong();
             }
@@ -162,6 +148,7 @@ public class MusicActivity extends AppCompatActivity {
             public void onClick(View v) {
                 player.stopMedia();
                 SetTimeTotal();
+                imgHinh.clearAnimation();
             }
         });
 
@@ -172,14 +159,14 @@ public class MusicActivity extends AppCompatActivity {
                     //Nếu đang hát--->Pause-->Play
                     player.pauseMedia();
                     btnPlay.setImageResource(R.drawable.play1);
-                    animation.cancel();
+                    imgHinh.clearAnimation();
                 } else {
                     // Đang ngừng ---> Phát ---> đổi hình pause
                     player.playMedia();
                     btnPlay.setImageResource(R.drawable.pause1);
                     imgHinh.startAnimation(animation);
                 }
-                txtTitle.setText(audioList.get(position).getTitle());
+                txtTitle.setText(audioList.get(player.audioIndex).getTitle());
                 SetTimeTotal();
                 UpdateTimeSong();
             }
@@ -193,10 +180,8 @@ public class MusicActivity extends AppCompatActivity {
 
         playAudio(position);
 
-        if (player.isPlaying()) {
-            SetTimeTotal();
-            UpdateTimeSong();
-        }
+        SetTimeTotal();
+        UpdateTimeSong();
 
     }
 
