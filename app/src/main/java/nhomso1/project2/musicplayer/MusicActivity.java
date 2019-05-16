@@ -179,14 +179,6 @@ public class MusicActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        storageUtil.clearCachedAudioPlaylist();
-        storageUtil.storeAudio(audioList);
-        storageUtil.storeAudioIndex(player.audioIndex);
-    }
-
     private void UpdateTimeSong() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
