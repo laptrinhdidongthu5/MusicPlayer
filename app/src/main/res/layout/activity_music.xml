@@ -26,8 +26,7 @@
         android:id="@+id/imageButtonPrev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="44dp"
         android:src="@drawable/back1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -42,7 +41,7 @@
         android:src="@drawable/next1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageButtonStop" />
 
     <ImageButton
@@ -55,7 +54,7 @@
         android:src="@drawable/stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.112"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageButtonPlay" />
 
     <ImageButton
@@ -64,11 +63,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="44dp"
         android:src="@drawable/pause1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.031"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageButtonPrev" />
 
     <TextView
@@ -82,13 +81,13 @@
         android:padding="5dp"
         android:text="Tên bài hát"
         android:textColor="#fff"
-        android:textSize="40sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/seekBarSong"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.068" />
+        app:layout_constraintVertical_bias="0.038" />
 
     <SeekBar
         android:id="@+id/seekBarSong"
@@ -123,15 +122,11 @@
         android:id="@+id/imageViewDisc"
         android:layout_width="400dp"
         android:layout_height="300dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="40dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275"
-        app:srcCompat="@drawable/disc" />
+        app:layout_constraintVertical_bias="0.332"
+        app:srcCompat="@drawable/disc"
+        tools:layout_editor_absoluteX="-21dp" />
 </android.support.constraint.ConstraintLayout>

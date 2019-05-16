@@ -44,7 +44,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public static final String ACTION_NEXT = "nhomso1.project2.ACTION_NEXT";
     public static final String ACTION_STOP = "nhomso1.project2.ACTION_STOP";
 
-    public MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer = new MediaPlayer();
 
     //MediaSession
     public MediaSessionManager mediaSessionManager;
@@ -177,6 +177,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         //reset mediaPlayer
         mediaPlayer.reset();
         initMediaPlayer();
+    }
+
+    public int getDuration(){
+        return mediaPlayer.getDuration();
     }
 
 

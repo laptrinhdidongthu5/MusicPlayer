@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -51,7 +52,6 @@ public class MusicActivity extends AppCompatActivity {
     private StorageUtil storageUtil;
 
     public static final String Broadcast_PLAY_NEW_AUDIO = "nhomso1.project2.MusicPlayer.PlayNewAudio";
-    public static final int MY_PERMISSION_REQUEST = 123;
 
     /**
      * Binding tới to the AudioPlayer Service
@@ -65,6 +65,8 @@ public class MusicActivity extends AppCompatActivity {
             player = binder.getService();
 
             serviceBound = true;//Set biến service Bound đang được chạy
+
+
         }
 
         @Override
@@ -89,13 +91,9 @@ public class MusicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
+        player = new MediaPlayerService();
+
         AnhXa();
-
-        audioList = new StorageUtil(getApplicationContext()).loadAudio();
-
-        position = getIntent().getIntExtra("index", 0);
-
-        playAudio(position);
 
         animation = AnimationUtils.loadAnimation(MusicActivity.this, R.anim.disc_rotate);
         imgHinh.startAnimation(animation);
@@ -107,14 +105,21 @@ public class MusicActivity extends AppCompatActivity {
                 if (position > audioList.size() - 1) {
                     position = 0;
                 }
-                player.stopMedia();
 
-                player.initMediaPlayer();
+                storageUtil.storeAudioIndex(position);
+                try {
+                    player.initMediaSession();
+                    player.initMediaPlayer();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 txtTitle.setText(audioList.get(position).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
+                player.skipToNext();
                 SetTimeTotal();
                 UpdateTimeSong();
+
             }
         });
 
@@ -141,13 +146,12 @@ public class MusicActivity extends AppCompatActivity {
                 position--;
                 if (position < 0) {
                     position = audioList.size() - 1;
-                    storageUtil.storeAudioIndex(position);
                 }
-                player.stopMedia();
-                player.initMediaPlayer();
+                storageUtil.storeAudioIndex(position);
                 txtTitle.setText(audioList.get(position).getTitle());
                 btnPlay.setImageResource(R.drawable.pause1);
                 imgHinh.startAnimation(animation);
+                player.skipToPrevious();
                 SetTimeTotal();
                 UpdateTimeSong();
             }
@@ -157,8 +161,6 @@ public class MusicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 player.stopMedia();
-                btnPlay.setImageResource(R.drawable.play1);
-                player.initMediaPlayer();
                 SetTimeTotal();
             }
         });
@@ -177,14 +179,25 @@ public class MusicActivity extends AppCompatActivity {
                     btnPlay.setImageResource(R.drawable.pause1);
                     imgHinh.startAnimation(animation);
                 }
-
                 txtTitle.setText(audioList.get(position).getTitle());
                 SetTimeTotal();
                 UpdateTimeSong();
-                player.playMedia();
-
             }
         });
+
+        storageUtil = new StorageUtil(getApplicationContext());
+
+        audioList = storageUtil.loadAudio();
+
+        position = getIntent().getIntExtra("index", 0);
+
+        playAudio(position);
+
+        if (player.isPlaying()) {
+            SetTimeTotal();
+            UpdateTimeSong();
+        }
+
     }
 
     private void UpdateTimeSong() {
@@ -218,8 +231,8 @@ public class MusicActivity extends AppCompatActivity {
 
     private void SetTimeTotal() {
         SimpleDateFormat dinhDangGio = new SimpleDateFormat("mm:ss");
-        txtTimeTotal.setText(dinhDangGio.format(player.getMediaPlayer().getDuration()));
-        skSong.setMax(player.getMediaPlayer().getDuration());
+        txtTimeTotal.setText(dinhDangGio.format(player.getDuration()));
+        skSong.setMax(player.getDuration());
     }
 
     protected void onStart() {
