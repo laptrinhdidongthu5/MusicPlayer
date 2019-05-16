@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
+
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
                     loadFragment(new SongsFragment());//load fragment
                     return true;
                 case R.id.navigation_playlist:
-                    toolbar.setTitle("Playlists");
+                    toolbar.setTitle("Yêu thích");
                     loadFragment(new PlaylistFragment());//load fragment
                     return true;
             }
