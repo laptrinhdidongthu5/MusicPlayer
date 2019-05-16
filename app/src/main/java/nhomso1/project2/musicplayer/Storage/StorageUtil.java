@@ -22,9 +22,7 @@ import nhomso1.project2.musicplayer.Object.Audio;
 
 public class StorageUtil {
 
-
     private final String STORAGE = "nhomso1.project2.MusicPlayer.STORAGE";
-
 
     private SharedPreferences preferences;
 

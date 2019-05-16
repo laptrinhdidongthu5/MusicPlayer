@@ -71,10 +71,6 @@ public class MainActivity extends AppCompatActivity implements
             return false;
         }
     };
-
-
-
-
     @Override
     public void onFragmentInteraction(Uri uri) {
 

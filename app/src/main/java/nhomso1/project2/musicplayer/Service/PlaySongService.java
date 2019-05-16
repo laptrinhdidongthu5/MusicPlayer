@@ -18,13 +18,13 @@ public class PlaySongService extends Service {
 
     public ArrayList<SongList> arraySong;
 
-    int position=0;
+    int position = 0;
 
     private final IBinder binder = new PlaySongBinder();
 
     public class PlaySongBinder extends Binder {
 
-        public PlaySongService getService()  {
+        public PlaySongService getService() {
             return PlaySongService.this;
         }
     }
@@ -34,7 +34,7 @@ public class PlaySongService extends Service {
 
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         // Tạo đối tượng MediaPlayer, chơi file nhạc của bạn.
         AddSong();
@@ -42,8 +42,7 @@ public class PlaySongService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return this.binder;
     }
 
@@ -56,7 +55,7 @@ public class PlaySongService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         // Chơi nhạc.
         //mediaPlayer.start();
 
@@ -72,66 +71,53 @@ public class PlaySongService extends Service {
         // super.onDestroy();
     }
 
-    public void TamDung()
-    {
+    public void TamDung() {
         mediaPlayer.pause();
     }
 
-    public  void Play()
-    {
+    public void Play() {
         mediaPlayer.start();
     }
 
-    public boolean Playing()
-    {
+    public boolean Playing() {
         return mediaPlayer.isPlaying();
     }
 
-    public void Stop()
-    {
+    public void Stop() {
         mediaPlayer.stop();
     }
 
-    public void Relaxse()
-    {
+    public void Relaxse() {
         mediaPlayer.release();
     }
 
-    private void AddSong()
-    {
+    private void AddSong() {
         arraySong = new ArrayList<>();
         arraySong.add(new SongList("Anh ơi ở lại", R.raw.baihat1));
-        arraySong.add(new SongList("Bạc Phận",R.raw.baihat2));
-        Log.d("BHHH", String.valueOf(arraySong.size()));
+        arraySong.add(new SongList("Bạc Phận", R.raw.baihat2));
     }
 
-    public void KhoiTaoMediaPlayer()
-    {
-        mediaPlayer=MediaPlayer.create(getApplicationContext(),arraySong.get(position).getFile());
+    public void KhoiTaoMediaPlayer() {
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), arraySong.get(position).getFile());
     }
 
-    public int MaxSize()
-    {
+    public int MaxSize() {
         return mediaPlayer.getDuration();
     }
 
-    public void LayGiaTri(int position)
-    {
-        this.position=position;
+    public void LayGiaTri(int position) {
+        this.position = position;
     }
 
-    public  String TenBaiHat()
-    {
+    public String TenBaiHat() {
         return arraySong.get(position).getTitle();
     }
 
-    public void ThayDoiThanhBar(int time)
-    {
+    public void ThayDoiThanhBar(int time) {
         mediaPlayer.seekTo(time);
     }
 
-    public  MediaPlayer LayMedia()
-    {
+    public MediaPlayer LayMedia() {
         return this.mediaPlayer;
     }
 }

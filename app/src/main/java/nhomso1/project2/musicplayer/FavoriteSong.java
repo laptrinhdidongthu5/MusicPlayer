@@ -44,7 +44,7 @@ public class FavoriteSong extends AppCompatActivity {
 
         if (audioList.size() > 0) {
             //Ánh xạ recyclerView, icon play pause của bài hát
-            recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+//            recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
 
             //Khởi tạo Adapter để đổ vào recyclerView
             RecyclerViewAdapter adapter = new RecyclerViewAdapter(audioList, getApplication());

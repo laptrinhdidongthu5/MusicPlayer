@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nhomso1.project2.musicplayer.MusicActivity;
 import nhomso1.project2.musicplayer.RecyclerView.CustomTouchListener;
 import nhomso1.project2.musicplayer.SqLite.FavoriteDAO;
 import nhomso1.project2.musicplayer.Service.MediaPlayerService;
@@ -54,24 +55,22 @@ import nhomso1.project2.musicplayer.Interface.onItemClickListener;
 public class SongsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String ARG_PARAM1 = "param1";
+    public static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public String mParam1;
+    public String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    public OnFragmentInteractionListener mListener;
 
 
     public static final String Broadcast_PLAY_NEW_AUDIO = "nhomso1.project2.MusicPlayer.PlayNewAudio";
     public static final int MY_PERMISSION_REQUEST = 123;
 
-
     boolean serviceBound = false;
 
-
-    private MediaPlayerService player;
+    public MediaPlayerService player;
     RecyclerView recyclerView;
 
     ArrayList<Audio> audioList;
@@ -134,7 +133,7 @@ public class SongsFragment extends Fragment {
                 //       playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
                 //play the first audio in the ArrayList
                 //       playAudio(2);
-                if (imageIndex == 4) {
+                if (imageIndex == 7) {
                     imageIndex = 0;
                     loadCollapsingImage(imageIndex);
                 } else {
@@ -221,7 +220,7 @@ public class SongsFragment extends Fragment {
     /**
      * Binding tới to the AudioPlayer Service
      */
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    public ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             //Ràng buộc với LocalService, bỏ IBinder và lấy phiên bản LocalService
@@ -253,7 +252,7 @@ public class SongsFragment extends Fragment {
      * Kiểm tra toàn bộ EXTERNAL_CONTENT
      * Load audio lên đổ vào danh sách audioList
      */
-    private void loadAudio() {
+    public void loadAudio() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
@@ -283,12 +282,10 @@ public class SongsFragment extends Fragment {
      * Giờ ta sẽ load nhạc và khởi tạo
      * Mọi xử lý liên quan đến chơi nhạc đều nằm ở Class MediaPlayerService chứ không nằm ở đây
      */
-    private void initRecyclerView(View view) {
+    public void initRecyclerView(View view) {
 
         //Đầu tiên load list Audio lên
         loadAudio();
-
-
         if (audioList.size() > 0) {
             //Ánh xạ recyclerView, icon play pause của bài hát
             recyclerView = view.findViewById(R.id.recyclerview);
@@ -306,8 +303,10 @@ public class SongsFragment extends Fragment {
                 public void playOnClick(View v, int index) {
                     //Các hiệu ứng và thành phần giao diện khác xử lý ở đây nhé
                     playAudio(index); //Khi bất kỳ item nào được nhấn thì sẽ chơi bài đó Easy!!!
+                    Intent intent = new Intent(getActivity(), MusicActivity.class);
+                    intent.putExtra("index",index);
+                    startActivity(intent);
                 }
-
                 @Override
                 public void favoriteOnClick(View v, int index) {
                     addFavorite(index);
@@ -323,7 +322,7 @@ public class SongsFragment extends Fragment {
      *
      * @param audioIndex
      */
-    private void playAudio(int audioIndex) {
+    public void playAudio(int audioIndex) {
         //Check is service is active
         if (!serviceBound) {
             //Lưu trữ audioList to SharedPreferences
@@ -350,7 +349,7 @@ public class SongsFragment extends Fragment {
         }
     }
 
-    private void addFavorite(int audioIndex) {
+    public void addFavorite(int audioIndex) {
         FavoriteDAO db = new FavoriteDAO(getActivity());
         Audio au = audioList.get(audioIndex);
 
@@ -363,7 +362,7 @@ public class SongsFragment extends Fragment {
     /**
      * Support collapsing lại để hiện thị danh sách nhạc tràn màn hình
      */
-    private void loadCollapsingImage(int i) {
+    public void loadCollapsingImage(int i) {
         TypedArray array = getResources().obtainTypedArray(R.array.images);
         collapsingImageView.setImageDrawable(array.getDrawable(i));
     }

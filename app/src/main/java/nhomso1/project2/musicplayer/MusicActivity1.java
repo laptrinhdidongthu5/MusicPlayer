@@ -13,21 +13,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
-import nhomso1.project2.musicplayer.Fragment.SongsFragment;
-import nhomso1.project2.musicplayer.Object.Audio;
-import nhomso1.project2.musicplayer.Service.MediaPlayerService;
 import nhomso1.project2.musicplayer.Service.PlaySongService;
 
-public class MusicActivity extends AppCompatActivity {
+public class MusicActivity1 extends AppCompatActivity {
 
     TextView txtTitle,txtTimeSong,txtTimeTotal;
     SeekBar skSong;
@@ -35,6 +30,7 @@ public class MusicActivity extends AppCompatActivity {
     ImageButton btnPrev,btnPlay,btnStop,btnNext;
 
     private PlaySongService playSongService;
+
 
     int position=0;
     Animation   animation;
@@ -59,6 +55,8 @@ public class MusicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_music);
 
         AnhXa();
+        Log.d("PLAY",btnPlay.toString());
+
 
         animation = AnimationUtils.loadAnimation(this,R.anim.disc_rotate);
 

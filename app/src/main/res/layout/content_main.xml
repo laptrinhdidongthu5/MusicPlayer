@@ -8,11 +8,11 @@
     tools:context="nhomso1.project2.musicplayer.MainActivity"
     tools:showIn="@layout/activity_main">
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
 </RelativeLayout>
