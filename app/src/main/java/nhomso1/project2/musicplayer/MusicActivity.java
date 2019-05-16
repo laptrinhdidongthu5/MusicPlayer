@@ -65,8 +65,6 @@ public class MusicActivity extends AppCompatActivity {
             player = binder.getService();
 
             serviceBound = true;//Set biến service Bound đang được chạy
-
-
         }
 
         @Override
@@ -126,6 +124,7 @@ public class MusicActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 //                playSongService.ThayDoiThanhBar(skSong.getProgress());
+                player.setProcess(skSong.getProgress());
             }
         });
 

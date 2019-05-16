@@ -626,6 +626,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         });
     }
 
+
+    public int getProcess(){
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    public void setProcess(int process){
+        mediaPlayer.seekTo(process);
+    }
+
     public void updateMetaData() {
         Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                 R.drawable.image5); //replace with medias albumArt
