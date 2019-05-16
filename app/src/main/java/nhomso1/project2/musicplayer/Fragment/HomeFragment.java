@@ -20,6 +20,7 @@ import nhomso1.project2.musicplayer.Object.PlayList;
 import nhomso1.project2.musicplayer.Object.Song;
 import nhomso1.project2.musicplayer.R;
 import nhomso1.project2.musicplayer.Adapter.SongAdapter;
+import nhomso1.project2.musicplayer.Storage.StorageUtil;
 
 
 /**
@@ -51,6 +52,8 @@ public class HomeFragment extends Fragment {
     private PlayListAdapter playAdapter;
     private List<PlayList> playLists;
     private Context context;
+
+    StorageUtil storageUtil = new StorageUtil(getActivity());
 
     public HomeFragment() {
         // Required empty public constructor
@@ -88,6 +91,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
+
         ViewPlay(view);
         ViewMv(view);
         intentView(view);
