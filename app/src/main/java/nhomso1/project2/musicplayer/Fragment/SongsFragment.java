@@ -276,9 +276,6 @@ public class SongsFragment extends Fragment {
 //                    playAudio(index); //Khi bất kỳ item nào được nhấn thì sẽ chơi bài đó Easy!!!
                     Intent intent = new Intent(getActivity(), MusicActivity.class);
                     intent.putExtra("index",index);
-                    loadAudio();
-                    new StorageUtil(getActivity().getApplicationContext()).storeAudio(audioList);
-                    new StorageUtil(getActivity().getApplicationContext()).storeAudioIndex(index);
                     startActivity(intent);
                 }
                 @Override
@@ -351,4 +348,6 @@ public class SongsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

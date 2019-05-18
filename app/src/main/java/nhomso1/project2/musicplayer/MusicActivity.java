@@ -1,18 +1,24 @@
 package nhomso1.project2.musicplayer;
 
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -21,8 +27,10 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import nhomso1.project2.musicplayer.Fragment.SongsFragment;
 import nhomso1.project2.musicplayer.Object.Audio;
 import nhomso1.project2.musicplayer.Service.MediaPlayerService;
+import nhomso1.project2.musicplayer.Service.PlaySongService;
 import nhomso1.project2.musicplayer.Storage.StorageUtil;
 
 public class MusicActivity extends AppCompatActivity {
@@ -39,7 +47,7 @@ public class MusicActivity extends AppCompatActivity {
 
     boolean serviceBound = false;
 
-    public MediaPlayerService player = new MediaPlayerService();
+    public MediaPlayerService player;
 
     private StorageUtil storageUtil;
 
@@ -80,8 +88,6 @@ public class MusicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-
-        getIntent().putExtra("serviceBound", serviceBound);
 
         player = new MediaPlayerService();
 
@@ -139,10 +145,9 @@ public class MusicActivity extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SetTimeTotal();
-                btnPlay.setImageResource(R.drawable.play1);
-                imgHinh.clearAnimation();
                 player.stopMedia();
+                SetTimeTotal();
+                imgHinh.clearAnimation();
             }
         });
 
@@ -165,18 +170,18 @@ public class MusicActivity extends AppCompatActivity {
                 UpdateTimeSong();
             }
         });
-        if (player.audioIndex != getIntent().getIntExtra("index", 0)) {
-            audioList = new StorageUtil(getApplicationContext()).loadAudio();
-            position = getIntent().getIntExtra("index", 0);
-            playAudio(position);
-            player.stopMedia();
-            player.mediaPlayer.reset();
-            new StorageUtil(getApplicationContext()).storeAudio(audioList);
-            new StorageUtil(getApplicationContext()).storeAudioIndex(position);
-            SetTimeTotal();
-            UpdateTimeSong();
-            Log.d("it10069", String.valueOf(serviceBound));
-        }
+
+        storageUtil = new StorageUtil(getApplicationContext());
+
+        audioList = storageUtil.loadAudio();
+
+        position = getIntent().getIntExtra("index", 0);
+
+        playAudio(position);
+
+        SetTimeTotal();
+        UpdateTimeSong();
+
     }
 
     private void UpdateTimeSong() {
@@ -240,6 +245,7 @@ public class MusicActivity extends AppCompatActivity {
             startService(playerIntent);
 
             bindService(playerIntent, serviceConnection, this.BIND_AUTO_CREATE);
+
         } else {
             //lưu một audioIndex to SharedPreferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
@@ -255,6 +261,11 @@ public class MusicActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (serviceBound) {
+            unbindService(serviceConnection);
+            //service is active
+            player.stopSelf();
+        }
     }
 
 

@@ -509,8 +509,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
      */
     public class LocalBinder extends Binder {
         public MediaPlayerService getService() {
-            // Trả về một intance Local
-            // để người dùng có thể gọi các phương thức công khai
+            // Trả về một intance LocalService để người dùng có thể gọi các phương thức công khai
             return MediaPlayerService.this;
         }
     }

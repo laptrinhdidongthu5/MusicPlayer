@@ -20,7 +20,9 @@ import nhomso1.project2.musicplayer.SupportMore.BottomNavigationBehavior;
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.OnFragmentInteractionListener,
         SongsFragment.OnFragmentInteractionListener,
-        PlaylistFragment.OnFragmentInteractionListener {
+        PlaylistFragment.OnFragmentInteractionListener
+
+{
 
 
     private ActionBar toolbar;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
 
         toolbar.setTitle("Home"); //Change title first
         loadFragment(new HomeFragment());//load fragment
+
+
     }
 
     private void loadFragment(Fragment fragment) {
@@ -49,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements
                     loadFragment(new SongsFragment());//load fragment
                     return true;
                 case R.id.navigation_playlist:
-                    toolbar.setTitle("Yêu thích");
+                    toolbar.setTitle("Playlists");
                     loadFragment(new PlaylistFragment());//load fragment
                     return true;
             }
